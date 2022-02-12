@@ -1,56 +1,62 @@
 import java.util.Scanner;
+import java.util.TreeSet;
 
 public class Solution {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
+        TreeSet<Point> set = new TreeSet<>();
+
+        TreeSet<Integer> horizontal = new TreeSet<>();
+        TreeSet<Integer> vertical = new TreeSet<>();
+
         int n = in.nextInt();
-        int m = in.nextInt();
+        int x, y;
+        Point p;
 
-        int[][] arr = new int[n+1][3];
+        for(int i = 0; i < n; i++) {
+            x = in.nextInt();
+            y = in.nextInt();
 
-        int a, b;
-        for(int i = 0; i < m; i++) {
-            a = in.nextInt();
-            b = in.nextInt();
+            p = new Point(x, y);
 
-            arr[a][0]++;
-            if(arr[a][0] > 2) {
-                System.out.println("No");
-                return;
-            }
-
-            arr[a][arr[a][0]] = b;
-
-            arr[b][0]++;
-            if(arr[b][0] > 2) {
-                System.out.println("No");
-                return;
-            }
-
-            arr[b][arr[b][0]] = a;
-
-            if(arr[a][0] == 2 && arr[b][0] == 2) {
-                int prev = a;
-                int cur = arr[a][1];
-
-                while(arr[cur][0] == 2) {
-                    if(arr[cur][1] == prev) {
-                        prev = cur;
-                        cur = arr[cur][2];
-                    } else {
-                        prev = cur;
-                        cur = arr[cur][1];
-                    }
-
-                    if(cur == b) {
-                        System.out.println("No");
-                        return;
-                    }
+            if(!set.contains(p)) {
+                if(set.contains(new Point(x, Point.ANY))) {
+                    vertical.add(x);
                 }
+                if(set.contains(new Point(Point.ANY, y))) {
+                    horizontal.add(y);
+                }
+
+                set.add(p);
             }
         }
 
-        System.out.println("Yes");
+        int h = horizontal.size();
+        int w = vertical.size();
+
+        System.out.println( (w*(w-1)/2) * (h*(h-1)/2) );
+    }
+}
+
+class Point implements Comparable<Point> {
+    public static final int ANY = Integer.MAX_VALUE;
+    int x, y;
+    @Override
+    public int compareTo(Point o) {
+        if(x == ANY || o.x == ANY || x == o.x) {
+            if(y == ANY || o.y == ANY || y == o.y) {
+                return 0;
+            } else {
+                return y-o.y;
+            }
+        } else {
+            return x - o.x;
+        }
+    }
+
+    Point(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
