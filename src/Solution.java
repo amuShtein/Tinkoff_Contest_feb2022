@@ -5,26 +5,52 @@ public class Solution {
         Scanner in = new Scanner(System.in);
 
         int n = in.nextInt();
-        int[] arr = new int[n];
-        long sum = 0;
+        int m = in.nextInt();
 
-        for(int i = 0; i < n; i++) {
-            arr[i] = in.nextInt();
-            sum += arr[i];
+        int[][] arr = new int[n+1][3];
+
+        int a, b;
+        for(int i = 0; i < m; i++) {
+            a = in.nextInt();
+            b = in.nextInt();
+
+            arr[a][0]++;
+            if(arr[a][0] > 2) {
+                System.out.println("No");
+                return;
+            }
+
+            arr[a][arr[a][0]] = b;
+
+            arr[b][0]++;
+            if(arr[b][0] > 2) {
+                System.out.println("No");
+                return;
+            }
+
+            arr[b][arr[b][0]] = a;
+
+            if(arr[a][0] == 2 && arr[b][0] == 2) {
+                int prev = a;
+                int cur = arr[a][1];
+
+                while(arr[cur][0] == 2) {
+                    if(arr[cur][1] == prev) {
+                        prev = cur;
+                        cur = arr[cur][2];
+                    } else {
+                        prev = cur;
+                        cur = arr[cur][1];
+                    }
+
+                    if(cur == b) {
+                        System.out.println("No");
+                        return;
+                    }
+                }
+            }
         }
 
-        long x = in.nextLong();
-
-        long full = x / sum;
-
-        x -= full*sum;
-        long nsum = 0;
-        int k = 0;
-        while(nsum <= x) {
-            nsum += arr[k];
-            k++;
-        }
-
-        System.out.println(full*n+k);
+        System.out.println("Yes");
     }
 }
