@@ -4,30 +4,27 @@ public class Solution {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        char[] num1 = in.next().toCharArray();
-        char[] num2 = in.next().toCharArray();
+        int n = in.nextInt();
+        int[] arr = new int[n];
+        long sum = 0;
 
-        int len1 = num1.length;
-        int len2 = num2.length;
-
-        char d1, d2;
-
-        for(int i = 0; i < len1; i++) {
-            if(i >= len2) {
-                System.out.println("No");
-                return;
-            }
-
-            d1 = num1[len1 - 1 - i];
-            d2 = num2[len2 - 1 - i];
-
-            if(d1 - '0' + d2 - '0' >= 10) {
-                System.out.println("Yes");
-                return;
-            }
+        for(int i = 0; i < n; i++) {
+            arr[i] = in.nextInt();
+            sum += arr[i];
         }
 
-        System.out.println("No");
-        return;
+        long x = in.nextLong();
+
+        long full = x / sum;
+
+        x -= full*sum;
+        long nsum = 0;
+        int k = 0;
+        while(nsum <= x) {
+            nsum += arr[k];
+            k++;
+        }
+
+        System.out.println(full*n+k);
     }
 }
