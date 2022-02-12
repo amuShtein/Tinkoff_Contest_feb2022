@@ -1,62 +1,67 @@
 import java.util.Scanner;
-import java.util.TreeSet;
 
 public class Solution {
+    private static final int UNKNOWN = 0;
+    private static final int DONT_EXIST = -1;
+    private static final int CALCULATING = -2;
+
+    static int[][] f_table = null;
+    static boolean[][] edges = null;
+    static int s, n, m;
+
+    static int f(int v, int mod) {
+        v--;
+        if(f_table[v][mod] > 0) {
+            return f_table[v][mod]-1;
+        }
+        switch (f_table[v][mod]) {
+            case UNKNOWN:
+                break;
+            case DONT_EXIST:
+            case CALCULATING:
+                return -1;
+        }
+        f_table[v][mod] = CALCULATING;
+        int min_way = Integer.MAX_VALUE;
+
+        for(int i = 0; i < n; i++) {
+            if(edges[i][v]) {
+                int way = f(i + 1, (mod + 1) % 3);
+                if(way != -1 && way < min_way) {
+                    min_way = way;
+                }
+            }
+        }
+        if(min_way == Integer.MAX_VALUE) {
+            f_table[v][mod] = DONT_EXIST;
+            return -1;
+        } else {
+            f_table[v][mod] = min_way + 2;
+            return min_way + 1;
+        }
+    }
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        TreeSet<Point> set = new TreeSet<>();
+        n = in.nextInt();
+        m = in.nextInt();
 
-        TreeSet<Integer> horizontal = new TreeSet<>();
-        TreeSet<Integer> vertical = new TreeSet<>();
+        edges = new boolean[n][n];
+        int u, v;
 
-        int n = in.nextInt();
-        int x, y;
-        Point p;
-
-        for(int i = 0; i < n; i++) {
-            x = in.nextInt();
-            y = in.nextInt();
-
-            p = new Point(x, y);
-
-            if(!set.contains(p)) {
-                if(set.contains(new Point(x, Point.ANY))) {
-                    vertical.add(x);
-                }
-                if(set.contains(new Point(Point.ANY, y))) {
-                    horizontal.add(y);
-                }
-
-                set.add(p);
-            }
+        for(int i = 0; i < m; i++) {
+            u = in.nextInt();
+            v = in.nextInt();
+            edges[u-1][v-1] = true;
         }
 
-        int h = horizontal.size();
-        int w = vertical.size();
+        s = in.nextInt();
+        int t = in.nextInt();
 
-        System.out.println( (w*(w-1)/2) * (h*(h-1)/2) );
-    }
-}
+        f_table = new int[n][3];
+        f_table[s-1][0] = 1;
 
-class Point implements Comparable<Point> {
-    public static final int ANY = Integer.MAX_VALUE;
-    int x, y;
-    @Override
-    public int compareTo(Point o) {
-        if(x == ANY || o.x == ANY || x == o.x) {
-            if(y == ANY || o.y == ANY || y == o.y) {
-                return 0;
-            } else {
-                return y-o.y;
-            }
-        } else {
-            return x - o.x;
-        }
-    }
-
-    Point(int x, int y) {
-        this.x = x;
-        this.y = y;
+        System.out.println(f(t, 0));
     }
 }
